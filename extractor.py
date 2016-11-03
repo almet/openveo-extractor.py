@@ -6,6 +6,11 @@ import shutil
 import sys
 import urlparse
 
+from jinja2 import FileSystemLoader, Environment
+
+__HERE__ = os.path.dirname(os.path.abspath(__file__))
+TEMPLATES_FOLDER = os.path.join(__HERE__, "templates")
+
 
 def transform_metadata(url, dest_path):
     resp = requests.get(url)
@@ -20,8 +25,6 @@ def transform_metadata(url, dest_path):
     if not os.path.exists(local_folder):
         os.makedirs(local_folder)
 
-    # origin['thumbnail']
-    # origin['link']
     def transform_timecodes(timecode):
         small_url = urlparse.urljoin(url, timecode['image']['small'])
         large_url = urlparse.urljoin(url, timecode['image']['large'])
@@ -34,6 +37,11 @@ def transform_metadata(url, dest_path):
         return timecode
 
     dest['timecodes'] = map(transform_timecodes, timecodes)
+    thumbnail_url = urlparse.urljoin(url, origin["thumbnail"])
+    thumbnail_filename = os.path.join(local_folder, 'thumbnail.jpg')
+    dest['thumbnail'] = download_image(thumbnail_url, thumbnail_filename)
+
+    # origin['link'] should be deleted?
 
     return dest
 
@@ -54,10 +62,23 @@ def download_slides(url, output_dir):
     with open(os.path.join(output_dir, filename), 'w+') as f:
         json.dump(metadata, f)
 
+    return filename, metadata
+
+
+def copy_templates(output_dir, filename, metadata):
+    simple_loader = FileSystemLoader(TEMPLATES_FOLDER)
+    env = Environment(loader=simple_loader)
+    template = env.get_template("index.html")
+    rendered = template.render(metadata=metadata, filename=filename)
+    destination_file = os.path.join(output_dir, metadata['id'] + '.html')
+    with open(destination_file, "w+") as f:
+        f.write(rendered)
+
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         exit('Please specify the URL of the openveo JSON file to extract')
     url = sys.argv[1]
     output_dir = sys.argv[2] if len(sys.argv) == 3 else '.'
-    download_slides(url, output_dir)
+    filename, metadata = download_slides(url, output_dir)
+    copy_templates(".", filename, metadata)
