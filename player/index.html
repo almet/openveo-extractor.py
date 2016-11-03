@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html ng-app="test.player" ng-controller="TestController" ng-strict-di>
+  <head>
+    <link rel="stylesheet" type="text/css" href="dist/openveo-player.css">
+
+    <!--[if lt IE 9]>
+      <script src="dist/lib/html5shiv/dist/html5shiv.min.js"></script>
+    <![endif]-->
+    <script>
+
+      // Set ovPlayerDirectory to openveo-player root path
+      // This is used by openveo-player to get partials
+      // Do not forget the trailing slash !
+      var ovPlayerDirectory = "dist/";
+    </script>
+
+  </head>
+
+  <body>
+
+    <ov-player
+      ov-player-type="youtube"
+      ov-data="data"
+      ng-show="ready"
+    ></ov-player>
+
+    <script type="text/javascript" src="dist/lib/angular/angular.min.js"></script>
+    <script type="text/javascript" src="dist/openveo-player.min.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+  </body>
+
+</html>
