@@ -75,10 +75,22 @@ def copy_templates(output_dir, filename, metadata):
         f.write(rendered)
 
 
+def get_metadata_url_from_video_url(video_url):
+    _id = urlparse.urlparse(video_url).path.split('/')[-1]
+    metadata_url = 'http://www.demo.openveo.com/publish/getVideo/%s' % _id
+    return metadata_url
+
+
+def main(video_url, metadata_dir, html_dir="."):
+    metadata_url = get_metadata_url_from_video_url(video_url)
+    filename, metadata = download_slides(metadata_url, metadata_dir)
+    copy_templates(html_dir, filename, metadata)
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         exit('Please specify the URL of the openveo JSON file to extract')
     url = sys.argv[1]
-    output_dir = sys.argv[2] if len(sys.argv) == 3 else '.'
-    filename, metadata = download_slides(url, output_dir)
-    copy_templates(".", filename, metadata)
+    metadata_dir = sys.argv[2] if len(sys.argv) >= 3 else '.'
+    html_dir = sys.argv[3] if len(sys.argv) >= 4 else '.'
+    main(url, metadata_dir, html_dir)
