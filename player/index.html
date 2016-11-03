@@ -1,6 +1,6 @@
-<!DOCTYPE html>
 <html ng-app="test.player" ng-controller="TestController" ng-strict-di>
   <head>
+    <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="dist/openveo-player.css">
 
     <!--[if lt IE 9]>
@@ -18,15 +18,17 @@
 
   <body>
 
-    <ov-player
-      ov-player-type="youtube"
-      ov-data="data"
-      ng-show="ready"
-    ></ov-player>
 
-    <script type="text/javascript" src="dist/lib/angular/angular.min.js"></script>
-    <script type="text/javascript" src="dist/openveo-player.min.js"></script>
+    <script type="text/javascript" src="dist/lib/angular/angular.js"></script>
+    <script type="text/javascript" src="dist/lib/angular-cookies/angular-cookies.min.js"></script>
+    <script type="text/javascript" src="dist/openveo-player.js"></script>
     <script type="text/javascript" src="app.js"></script>
+
+    <ov-player
+    ov-player-type="youtube"
+    ov-data="data"
+    ng-show="ready"
+    ></ov-player>
   </body>
 
 </html>

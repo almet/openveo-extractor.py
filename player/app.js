@@ -12,7 +12,7 @@
    */
   function TestController($scope, $window, $location, $http){
     $scope.ready = true;
-    $http.get('test.json').success(function(data) {
+    $http.get('content/r19ZYySke.json').success(function(data) {
       $scope.data = data;
     });
   }

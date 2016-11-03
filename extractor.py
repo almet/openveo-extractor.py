@@ -15,7 +15,7 @@ def transform_metadata(url, dest_path):
 
     timecodes = origin['timecodes']
     video_id = origin['id']
-    
+
     local_folder = os.path.join(dest_path, video_id)
     if not os.path.exists(local_folder):
         os.makedirs(local_folder)
@@ -34,13 +34,13 @@ def transform_metadata(url, dest_path):
         return timecode
 
     dest['timecodes'] = map(transform_timecodes, timecodes)
-                                    
+
     return dest
 
 
 def download_image(url, path):
     print("Downloading %s at %s" % (url, path))
-    resp  = requests.get(url, stream=True)
+    resp = requests.get(url, stream=True)
     if resp.status_code == 200:
         with open(path, 'wb') as f:
             resp.raw_decode_content = True
