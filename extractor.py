@@ -10,11 +10,11 @@ import urlparse
 def transform_metadata(url, dest_path):
     resp = requests.get(url)
 
-    origin = resp.json()
+    origin = resp.json()['entity']
     dest = copy.deepcopy(origin)
 
-    timecodes = origin['entity']['timecodes']
-    video_id = origin['entity']['id']
+    timecodes = origin['timecodes']
+    video_id = origin['id']
     
     local_folder = os.path.join(dest_path, video_id)
     if not os.path.exists(local_folder):
@@ -33,7 +33,7 @@ def transform_metadata(url, dest_path):
         timecode['image']['large'] = download_image(large_url, large_filename)
         return timecode
 
-    dest['entity']['timecodes'] = map(transform_timecodes, timecodes)
+    dest['timecodes'] = map(transform_timecodes, timecodes)
                                     
     return dest
 
@@ -50,7 +50,7 @@ def download_image(url, path):
 
 def download_slides(url, output_dir):
     metadata = transform_metadata(url, output_dir)
-    filename = '%s.json' % metadata['entity']['id']
+    filename = '%s.json' % metadata['id']
     with open(os.path.join(output_dir, filename), 'w+') as f:
         json.dump(metadata, f)
 
