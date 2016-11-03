@@ -48,13 +48,16 @@ def download_image(url, path):
     return path
 
 
-def download_slides(url):
-    metadata = transform_metadata(url, '.')
-    with open('%s.json' % metadata['entity']['id'], 'w+') as f:
+def download_slides(url, output_dir):
+    metadata = transform_metadata(url, output_dir)
+    filename = '%s.json' % metadata['entity']['id']
+    with open(os.path.join(output_dir, filename), 'w+') as f:
         json.dump(metadata, f)
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         exit('Please specify the URL of the openveo JSON file to extract')
-    download_slides(sys.argv[1])
+    url = sys.argv[1]
+    output_dir = sys.argv[2] if len(sys.argv) == 3 else '.'
+    download_slides(url, output_dir)
