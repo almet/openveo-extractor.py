@@ -7,6 +7,7 @@ import shutil
 import urlparse
 
 from jinja2 import FileSystemLoader, Environment
+from slugify import slugify
 
 __HERE__ = os.path.dirname(os.path.abspath(__file__))
 TEMPLATES_FOLDER = os.path.join(__HERE__, 'templates')
@@ -76,12 +77,16 @@ class VideoDownloader(object):
                 json.dump(metadata, f)
         return filename, metadata
 
-    def copy_templates(self, filename, metadata):
+    def copy_templates(self, metadata_location, metadata):
         simple_loader = FileSystemLoader(TEMPLATES_FOLDER)
         env = Environment(loader=simple_loader)
         template = env.get_template('index.html')
-        rendered = template.render(metadata=metadata, filename=filename)
-        dest_file = os.path.join(self.html_dir, metadata['id'] + '.html')
+        rendered = template.render(
+            metadata=metadata,
+            metadata_location=metadata_location)
+        slugified_title = slugify(metadata['title'], to_lower=True)
+        dest_file = os.path.join(self.html_dir, slugified_title + '.html')
+        self.log("Writing %s" % dest_file)
         if not self.dry_run:
             with open(dest_file, 'w+') as f:
                 f.write(rendered)
@@ -94,8 +99,8 @@ class VideoDownloader(object):
     def generate_video_html(self, video_url):
         try:
             metadata_url = self.get_metadata_url_from_video_url(video_url)
-            filename, metadata = self.download_slides(metadata_url)
-            self.copy_templates(filename, metadata)
+            metadata_location, metadata = self.download_slides(metadata_url)
+            self.copy_templates(metadata_location, metadata)
         except Exception as e:
             self.log(str(e))
 
@@ -113,7 +118,6 @@ def main(json_file, metadata_dir, html_dir, verbose=None, dry_run=None):
     downloader.log('Downloading %s videos' % len(urls))
     for url in urls:
         downloader.generate_video_html(url)
-
 
 if __name__ == '__main__':
     description = 'Download and host openveo videos on a static website.'

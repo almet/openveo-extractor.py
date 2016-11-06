@@ -38,8 +38,9 @@
   function TestController($scope, $window, $location, $http){
     $scope.ready = true;
     $scope.isFullViewport = true;
-    $http.get('content/{{filename}}').success(function(data) {
+    $http.get('content/{{metadata_location}}').success(function(data) {
       $scope.data = data;
+      document.title = data.title;
     });
   }
 
