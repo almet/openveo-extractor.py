@@ -14,6 +14,7 @@ TEMPLATES_FOLDER = os.path.join(__HERE__, "templates")
 
 def transform_metadata(url, dest_path):
     resp = requests.get(url)
+    resp.raise_for_status()
 
     origin = resp.json()['entity']
     dest = copy.deepcopy(origin)
@@ -58,6 +59,7 @@ def download_image(url, path):
 
 def download_slides(url, output_dir):
     metadata = transform_metadata(url, output_dir)
+
     filename = '%s.json' % metadata['id']
     with open(os.path.join(output_dir, filename), 'w+') as f:
         json.dump(metadata, f)
@@ -81,11 +83,27 @@ def get_metadata_url_from_video_url(video_url):
     return metadata_url
 
 
-def main(video_url, metadata_dir, html_dir="."):
+def generate_video_html(video_url, metadata_dir, html_dir="."):
     metadata_url = get_metadata_url_from_video_url(video_url)
     filename, metadata = download_slides(metadata_url, metadata_dir)
-    copy_templates(html_dir, filename, metadata)
+    if filename and metadata:
+        copy_templates(html_dir, filename, metadata)
 
+
+def parse_json(json_file):
+    with open(json_file) as f:
+        data = json.load(f)
+    return ['http://www.demo.openveo.com' + r['link']
+            for r in data['rows']]
+
+def main(json_file, metadata_dir, html_dir):
+    urls = parse_json(json_file)
+    print "Downloading %s videos" % len(urls)
+    for url in urls:
+        try:
+            generate_video_html(url, metadata_dir, html_dir)
+        except Exception as e:
+            print str(e)
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
