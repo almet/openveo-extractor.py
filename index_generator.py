@@ -2,6 +2,7 @@
 import json
 import os
 from codecs import open
+import sys
 
 from jinja2 import FileSystemLoader, Environment
 from slugify import slugify
@@ -27,4 +28,4 @@ def generate_html(json_file, html_dir):
 
 
 if __name__ == '__main__':
-    generate_html('reponse.json', '.')
+    generate_html(sys.argv[1], '.')
