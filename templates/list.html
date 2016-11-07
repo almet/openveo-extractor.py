@@ -29,7 +29,7 @@
 
     {% for video in videos %}
     	<article class="thumb">
-        <a class="image" href="{{ slugify(video['title'], to_lower=True)}}.html"></a><img src="./content/{{video['id']}}/thumbnail.jpg" alt="" /></a>
+        <a class="image" href="{{ slugify(video['title'], to_lower=True)}}.html"></a><img src="./content/{{video['id']}}/thumbnail.jpg" height="100%" /></a>
         <h2>{{ video['title'] }}</h2>
       </article>
     {% endfor %}
